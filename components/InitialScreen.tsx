@@ -191,10 +191,15 @@ const InitialScreen: React.FC<InitialScreenProps> = ({ onSelectOption, avatarIma
       <div className="w-full">
         {renderContent()}
       </div>
-       <div className="w-full mt-8 px-4">
+      <div className="w-full mt-8 px-4 flex flex-col gap-4">
         <p className="text-sm text-slate-500" style={{ fontFamily: "'Poppins', sans-serif" }}>
           "{quote}"
         </p>
+        <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
+          <p className="text-[10px] text-blue-700 leading-tight">
+            <strong>Privacy Notice:</strong> This app is designed for students. We do not store your personal data, and your conversations are not used to train AI models. Please do not share your full name, address, or school name.
+          </p>
+        </div>
       </div>
     </div>
   );

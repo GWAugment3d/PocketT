@@ -153,6 +153,9 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }) => {
           <SendIcon />
         </button>
       </div>
+      <p className="text-[10px] text-slate-400 mt-1 px-2 text-center">
+        PocketTeacher uses AI. Always check important facts. Your data is private and secure.
+      </p>
     </div>
   );
 };

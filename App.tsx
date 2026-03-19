@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Chat } from '@google/genai';
 import { ChatMessage, AppState, ChatThread } from './types';
-import { getChatSession, generateImage, generateSpeechForSentences } from './services/geminiService';
+import { getChatSession, generateImage, generateSpeechForSentences, ChatSession } from './services/geminiService';
 import InitialScreen from './components/InitialScreen';
 import Sidebar from './components/Sidebar';
 import ChatInput from './components/ChatInput';
@@ -78,7 +77,7 @@ export default function App() {
   const [appState, setAppState] = useState<AppState>('initial');
   const [chatThreads, setChatThreads] = useState<ChatThread[]>([]);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
-  const [currentChatSession, setCurrentChatSession] = useState<Chat | null>(null);
+  const [currentChatSession, setCurrentChatSession] = useState<ChatSession | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [initialAvatar, setInitialAvatar] = useState('https://raw.githubusercontent.com/GWAugment3d/pocketteacherimages/main/landingpageavatar.jpg');
@@ -170,8 +169,8 @@ export default function App() {
   const startNewChat = useCallback((initialPrompt: string, title: string, useProModel: boolean = false, options?: { isVisibleInHistory?: boolean }) => {
     stopSpeech();
     
-    const modelName = useProModel ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
-    const config = useProModel ? { thinkingConfig: { thinkingBudget: 32768 } } : {};
+    const modelName = useProModel ? 'gemini-3.1-pro-preview' : 'gemini-3-flash-preview';
+    const config = useProModel ? { thinkingConfig: { thinkingLevel: 'HIGH' } } : {};
     
     const newThread: ChatThread = {
         id: `thread-${Date.now()}`,
@@ -300,7 +299,7 @@ export default function App() {
                   title: 'My Study Timetable',
                   messages: [{ id: `model-${Date.now()}`, author: 'model', text: modelResponse }],
                   lastUpdated: Date.now(),
-                  modelName: 'gemini-2.5-flash',
+                  modelName: 'gemini-3-flash-preview',
                   config: {},
                   history: [],
                   status: 'active',
@@ -697,7 +696,7 @@ export default function App() {
                 title: threadTitle,
                 messages: [{ id: `model-${Date.now()}`, author: 'model', text: initialMessage }],
                 lastUpdated: Date.now(),
-                modelName: 'gemini-2.5-flash',
+                modelName: 'gemini-3-flash-preview',
                 config: {},
                 history: [],
                 status: 'active',
@@ -714,7 +713,7 @@ export default function App() {
 
         if (label === 'Mini-lessons') {
             const newThread: ChatThread = {
-                id: `thread-${Date.now()}`, title: 'Mini-lessons', messages: [{ id: `model-${Date.now()}`, author: 'model', text: "Ok great! What topic are you on? Or just tell me what you’d like to learn." }], lastUpdated: Date.now(), modelName: 'gemini-2.5-flash', config: {}, history: [], status: 'active'
+                id: `thread-${Date.now()}`, title: 'Mini-lessons', messages: [{ id: `model-${Date.now()}`, author: 'model', text: "Ok great! What topic are you on? Or just tell me what you’d like to learn." }], lastUpdated: Date.now(), modelName: 'gemini-3-flash-preview', config: {}, history: [], status: 'active'
             };
             setChatThreads(prev => [newThread, ...prev]);
             setActiveThreadId(newThread.id);
@@ -739,7 +738,7 @@ export default function App() {
         if (label === 'My Study Timetable') {
             const threadTitle = 'My Study Timetable';
             const newThread: ChatThread = {
-                id: `thread-${Date.now()}`, title: threadTitle, messages: [], lastUpdated: Date.now(), modelName: 'gemini-2.5-flash', config: {}, history: [], status: 'active', isStudyPlan: true,
+                id: `thread-${Date.now()}`, title: threadTitle, messages: [], lastUpdated: Date.now(), modelName: 'gemini-3-flash-preview', config: {}, history: [], status: 'active', isStudyPlan: true,
             };
             if (studyPlan) {
                 newThread.messages.push({ id: `model-${Date.now()}`, author: 'model', text: studyPlan.content });

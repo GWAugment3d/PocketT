@@ -1,6 +1,24 @@
 
 
-import { GenerationConfig, Content } from '@google/genai';
+export interface Content {
+  role?: string;
+  parts?: { text?: string; inlineData?: { mimeType?: string; data?: string } }[];
+}
+
+export interface GenerationConfig {
+  temperature?: number;
+  topP?: number;
+  topK?: number;
+  maxOutputTokens?: number;
+  stopSequences?: string[];
+  responseMimeType?: string;
+  responseSchema?: any;
+  thinkingConfig?: {
+    includeThoughts?: boolean;
+    thinkingBudget?: number;
+    thinkingLevel?: string;
+  };
+}
 
 export interface ChatMessage {
   id: string;

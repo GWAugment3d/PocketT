@@ -1,26 +1,59 @@
 
-
-import { GoogleGenAI, GenerationConfig, Content, Type, Modality } from '@google/genai';
+import { GoogleGenAI, Modality, Type, GenerateContentResponse, ThinkingLevel } from "@google/genai";
+import { Content, GenerationConfig, Flashcard } from '../types';
 import { SYSTEM_INSTRUCTION } from '../systemInstruction';
-import { Flashcard } from '../types';
 
-// Initialize the Gemini API client
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+// Initialize the AI client lazily to avoid issues if the key is missing at load time
+let aiClient: GoogleGenAI | null = null;
 
-export const getChatSession = (modelName: string = 'gemini-2.5-flash', config: Partial<GenerationConfig> = {}, history: Content[]) => {
-    return ai.chats.create({
+const getAI = () => {
+    if (!aiClient) {
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) {
+            throw new Error('GEMINI_API_KEY is not set. Please check your environment variables.');
+        }
+        aiClient = new GoogleGenAI({ apiKey });
+    }
+    return aiClient;
+};
+
+export interface ChatSession {
+    sendMessageStream: (params: { message: any }) => Promise<AsyncIterable<GenerateContentResponse>>;
+    getHistory: () => Promise<Content[]>;
+}
+
+export const getChatSession = (modelName: string = 'gemini-3-flash-preview', config: Partial<GenerationConfig> = {}, history: Content[]): ChatSession => {
+    const ai = getAI();
+    
+    const finalConfig: any = {
+        systemInstruction: SYSTEM_INSTRUCTION,
+        ...config,
+    };
+
+    if (finalConfig.thinkingConfig?.thinkingLevel) {
+        finalConfig.thinkingConfig.thinkingLevel = finalConfig.thinkingConfig.thinkingLevel as ThinkingLevel;
+    }
+
+    const chat = ai.chats.create({
         model: modelName,
-        config: {
-            systemInstruction: SYSTEM_INSTRUCTION,
-            ...config,
-        },
+        config: finalConfig,
         history: history || [],
     });
+
+    return {
+        sendMessageStream: async ({ message }) => {
+            return await chat.sendMessageStream({ message });
+        },
+        getHistory: async () => {
+            return await chat.getHistory();
+        },
+    };
 };
 
 export const sendMessage = async (message: string): Promise<string> => {
+    const ai = getAI();
     const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3-flash-preview',
         contents: message,
         config: {
             systemInstruction: SYSTEM_INSTRUCTION,
@@ -31,6 +64,7 @@ export const sendMessage = async (message: string): Promise<string> => {
 
 export const generateImage = async (title: string, content: string): Promise<string | null> => {
     try {
+        const ai = getAI();
         const imagePrompt = `Create a single, photo-realistic banner image for a business case study about a company named "${title}". The image will be displayed in a wide banner format, cropping the top and bottom.
 **Composition is critical to avoid key details being cut off.**
 - **Focal Point:** The absolute most important visual element (e.g., the business's sign, the main product, or the owner's face) MUST be perfectly centered, both horizontally and vertically.
@@ -42,9 +76,11 @@ export const generateImage = async (title: string, content: string): Promise<str
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash-image',
             contents: { parts: [{ text: imagePrompt }] },
-            config: { responseModalities: [Modality.IMAGE] },
+            config: {
+                responseModalities: [Modality.IMAGE]
+            }
         });
-        
+
         const base64 = response.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
         return base64 ? `data:image/png;base64,${base64}` : null;
     } catch (error) {
@@ -63,6 +99,7 @@ const voiceMap: Record<string, { voiceName: string; instruction?: string }> = {
 
 export const generateSpeech = async (text: string, voiceKey: string = 'standard'): Promise<string | null> => {
     try {
+        const ai = getAI();
         const voiceConfig = voiceMap[voiceKey] || voiceMap['standard'];
         const finalText = voiceConfig.instruction ? `${voiceConfig.instruction} "${text}"` : text;
         const voiceName = voiceConfig.voiceName;
@@ -72,9 +109,14 @@ export const generateSpeech = async (text: string, voiceKey: string = 'standard'
             contents: [{ parts: [{ text: finalText }] }],
             config: {
                 responseModalities: [Modality.AUDIO],
-                speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voiceName as any } } },
+                speechConfig: {
+                    voiceConfig: {
+                        prebuiltVoiceConfig: { voiceName }
+                    },
+                },
             },
         });
+
         const base64 = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
         return base64 || null;
     } catch (error) {
@@ -103,6 +145,7 @@ export const generateSpeechForSentences = async (text: string, voiceKey: string 
 
 export const extractTextFromImages = async (base64Images: string[]): Promise<string | null> => {
     try {
+        const ai = getAI();
         const parts: any[] = base64Images.map(img => {
             const mimeType = img.match(/data:(.*);base64,/)?.[1] || 'image/jpeg';
             const base64Data = img.split(',')[1] || img;
@@ -119,9 +162,10 @@ export const extractTextFromImages = async (base64Images: string[]): Promise<str
         });
         
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: { parts },
+            model: 'gemini-3-flash-preview',
+            contents: { parts }
         });
+        
         return response.text || null;
     } catch (error) {
         console.error('Error extracting text:', error);
@@ -131,12 +175,13 @@ export const extractTextFromImages = async (base64Images: string[]): Promise<str
 
 export const generateFlashcards = async (topic: string): Promise<Flashcard[]> => {
     try {
+        const ai = getAI();
         const prompt = `Create a set of 10 GCSE Business flashcards on the topic of "${topic}". 
 Return the output as a JSON array of objects with "front" and "back" keys.
 Example: [{"front": "What is profit?", "back": "Total revenue minus total costs."}]`;
         
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3-flash-preview',
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
@@ -153,7 +198,7 @@ Example: [{"front": "What is profit?", "back": "Total revenue minus total costs.
                 },
             },
         });
-        
+
         const flashcards: Flashcard[] = JSON.parse(response.text || '[]');
         return Array.isArray(flashcards) ? flashcards : [];
     } catch (error) {
