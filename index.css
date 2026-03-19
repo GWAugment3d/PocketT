@@ -1,0 +1,22 @@
+.progress-pattern {
+  background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
+  background-size: 4px 4px;
+}
+
+.font-marker-black {
+  font-family: 'Permanent Marker', cursive;
+  color: #1e3a8a; /* blue-900 */
+}
+
+.ao1 {
+  color: #D97706; /* amber-600 */
+  font-weight: 600;
+}
+.ao2 {
+  color: #2563EB; /* blue-600 */
+  font-weight: 600;
+}
+.ao3 {
+  color: #16A34A; /* green-600 */
+  font-weight: 600;
+}

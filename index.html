@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PocketTeacher</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Grape+Nuts&family=Kalam:wght@400;700&family=Patrick+Hand&family=Special+Elite&family=Permanent+Marker&family=Poppins:wght@400;500;600;700&family=Square+Peg&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --font-teacher: 'Inter', system-ui, sans-serif;
+        --font-user: 'Inter', system-ui, sans-serif;
+        --font-size-teacher: 16px;
+        --line-height-teacher: 1.5;
+        --font-size-user: 16px;
+        --line-height-user: 1.5;
+      }
+      body {
+        font-family: var(--font-teacher);
+        font-size: var(--font-size-teacher);
+        line-height: var(--line-height-teacher);
+      }
+      .font-user {
+        font-family: var(--font-user);
+        font-size: var(--font-size-user);
+        line-height: var(--line-height-user);
+      }
+      .font-case-study {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+      .font-marker {
+        font-family: 'Permanent Marker', cursive;
+        color: #6A0DAD;
+        font-size: 1.4rem;
+        line-height: 1.2;
+        display: block;
+        margin-top: 0.5rem;
+        margin-bottom: 0rem;
+      }
+      .font-marker-orange {
+        font-family: 'Permanent Marker', cursive;
+        color: #D97706; /* amber-600 */
+        font-size: 1.2rem; /* A bit smaller for sub-headings */
+        line-height: 1.2;
+      }
+       .font-marker-black {
+        font-family: 'Permanent Marker', cursive;
+        color: #1f2937; /* gray-800 */
+        font-size: 1.1rem;
+        line-height: 1.2;
+      }
+      .font-marker-teal {
+        font-family: 'Permanent Marker', cursive;
+        color: #0D9488; /* teal-600 */
+        font-size: 1.1rem;
+        line-height: 1.2;
+        display: block;
+        margin-top: 0.5rem;
+        margin-bottom: 0rem;
+      }
+      .bold-text {
+        font-weight: 700;
+      }
+      .torn-paper {
+        background-color: white;
+        padding: 1rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        position: relative;
+        border: 1px solid #e2e8f0;
+      }
+      .torn-paper::before, .torn-paper::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 20px;
+        background-size: 40px 40px;
+      }
+      .torn-paper::before {
+        top: -20px;
+        background-image: linear-gradient(45deg, white 50%, transparent 51%), linear-gradient(-45deg, white 50%, transparent 51%);
+        background-position: 0 100%;
+      }
+      .torn-paper::after {
+        bottom: -20px;
+        background-image: linear-gradient(135deg, white 50%, transparent 51%), linear-gradient(-135deg, white 50%, transparent 51%);
+        background-position: 0 0;
+      }
+
+      .ink-reveal {
+        opacity: 0;
+        animation: fadeIn 0.4s forwards;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          color: #a7a7ff;
+        }
+        to {
+          opacity: 1;
+          color: inherit;
+        }
+      }
+
+      /* New Pulsing Loader Animation */
+      @keyframes pulse-shadow {
+        0% {
+          box-shadow: 0 0 0 0 rgba(106, 13, 173, 0.1);
+        }
+        50% {
+          box-shadow: 0 4px 12px 0 rgba(106, 13, 173, 0.2);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(106, 13, 173, 0.1);
+        }
+      }
+
+      .comet-loader {
+        position: relative;
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
+        background: white;
+        width: fit-content;
+        margin: 0 auto;
+        animation: pulse-shadow 2.5s ease-in-out infinite;
+        border: 1px solid #e2e8f0;
+      }
+      
+      .comet-loader p {
+        position: relative;
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        color: #334155; /* slate-700 */
+        font-size: 1rem;
+        text-align: center;
+      }
+
+
+      /* New styles for the mockup */
+      .logo-pocket {
+        font-family: 'Permanent Marker', cursive;
+        color: #1f2937; /* Equivalent to text-gray-800 */
+      }
+      .logo-teacher {
+        font-family: 'Permanent Marker', cursive;
+        color: #6A0DAD; /* purple */
+      }
+      
+      .menu-button {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem; /* 12px */
+        text-align: left;
+        padding: 0.5rem 1.25rem; /* 8px 20px */
+        background-color: rgba(255, 255, 255, 0.9); /* White with 90% opacity */
+        border: 1px solid #e2e8f0; /* slate-200 */
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+        transition: all 0.2s ease-in-out;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        color: #334155; /* slate-700 */
+      }
+      .menu-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -2px rgba(0,0,0,0.05);
+        border-color: #93c5fd; /* blue-300 */
+      }
+      .highlight-audio {
+        color: #6A0DAD;
+        transition: color 0.2s ease-in-out;
+      }
+      
+      .sidebar-font {
+        font-family: 'Poppins', sans-serif;
+      }
+
+      /* New styles for Floating Avatar */
+      .floating-avatar {
+        position: absolute;
+        top: 1rem; /* 16px */
+        right: 1rem; /* 16px */
+        width: 56px;
+        height: 56px;
+        border-radius: 9999px;
+        border: 2.5px solid white; /* Default white rim, slightly slimmer */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 4px 10px rgba(0, 0, 0, 0.08);
+        z-index: 30; /* Below sidebar (z-40/50) but above content */
+        transition: box-shadow 0.3s ease-out, border-color 0.3s ease-in-out;
+        will-change: transform;
+        cursor: grab;
+        touch-action: none; /* Prevents scrolling on touch devices while dragging */
+      }
+      .floating-avatar:active {
+        cursor: grabbing;
+      }
+
+      .floating-avatar img {
+        border-radius: 9999px;
+      }
+
+      .avatar-close-btn {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background-color: #4A5568; /* gray-700 */
+        color: white;
+        border-radius: 9999px;
+        height: 1.5rem; /* 24px */
+        width: 1.5rem; /* 24px */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+        z-index: 31;
+      }
+      .group:hover .avatar-close-btn {
+        opacity: 1;
+      }
+
+      /* For Live Conversation Visualizer */
+      .live-visualizer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 12rem;
+        height: 6rem;
+        background: radial-gradient(circle at 0 0, rgba(96, 165, 250, 0.8) 0%, rgba(96, 165, 250, 0) 70%);
+        border-bottom-right-radius: 12rem;
+        z-index: 50;
+        cursor: pointer;
+        transform: scale(0);
+        transform-origin: top left;
+        transition: transform 0.3s ease-out;
+      }
+      
+      .live-visualizer.active {
+        transform: scale(1);
+      }
+
+      .live-visualizer.speaking::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-bottom-right-radius: 12rem;
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0% {
+          transform: scale(0.95);
+          box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+        }
+        70% {
+          transform: scale(1.1);
+          box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+        }
+        100% {
+          transform: scale(0.95);
+          box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+        }
+      }
+
+      /* New styles for Floating Avatar Visual States */
+      @keyframes rotate-gradient {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      
+      /* State 1: Live mode is active (listening/thinking) */
+      .floating-avatar.live-active {
+        border-color: transparent; /* Hide the solid border */
+      }
+      .floating-avatar.live-active::before {
+          content: '';
+          position: absolute;
+          z-index: -1;
+          left: -2.5px;
+          top: -2.5px;
+          width: calc(100% + 5px);
+          height: calc(100% + 5px);
+          background: conic-gradient(
+            from 0deg,
+            #8b5cf6,       /* violet-500 */
+            #c4b5fd 40%,  /* violet-300 */
+            white 50%,
+            #c4b5fd 60%,  /* violet-300 */
+            #8b5cf6
+          );
+          border-radius: 9999px;
+          animation: rotate-gradient 6s linear infinite; /* Slow rotation for thinking */
+      }
+
+      /* State 2: Live mode is active AND AI is speaking */
+      .floating-avatar.speaking {
+        border-color: transparent; /* Hide the solid border to reveal the gradient */
+      }
+
+      .floating-avatar.speaking::before {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        left: -2.5px; /* Match the new slimmer border width */
+        top: -2.5px;
+        width: calc(100% + 5px);
+        height: calc(100% + 5px);
+        background: conic-gradient(
+          from 0deg,
+          #8b5cf6,       /* violet-500 */
+          #ec4899 15%,  /* pink-500 */
+          white 30%,
+          white 55%,   /* Widened white band for shimmer */
+          #f97316 70%,  /* orange-500 */
+          #84cc16 85%,  /* lime-500 */
+          #3b82f6 95%,  /* blue-500 */
+          #8b5cf6        /* back to violet */
+        );
+        border-radius: 9999px;
+        animation: rotate-gradient 2s linear infinite; /* Faster rotation */
+      }
+
+      /* NEW: State 3: Initial nudge animation to show interactivity */
+      .floating-avatar.initial-nudge {
+        border-color: transparent; /* Hide the solid border to reveal the gradient */
+      }
+      .floating-avatar.initial-nudge::before {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        left: -2.5px;
+        top: -2.5px;
+        width: calc(100% + 5px);
+        height: calc(100% + 5px);
+        background: conic-gradient(
+          from 0deg,
+          #a78bfa,       /* violet-400, slightly softer */
+          transparent 15%,
+          transparent 85%,
+          #a78bfa
+        );
+        border-radius: 9999px;
+        /* Run 'rotate-gradient' for 2.5s per rotation, 3 times, after a 1s delay */
+        animation: rotate-gradient 2.5s linear 1s 3;
+      }
+
+
+      /* New Study Planner styles */
+      .study-planner-input {
+        background-color: white;
+        font-family: 'Poppins', sans-serif;
+        color: #6A0DAD; /* purple */
+      }
+      .study-planner-topics-input {
+        background-color: white;
+        color: #334155; /* slate-700 */
+        font-family: 'Poppins', sans-serif;
+      }
+      .study-planner-topics-input::placeholder {
+        font-family: 'Kalam', cursive;
+        color: #6b7280; /* gray-500 */
+        opacity: 1; /* Firefox */
+      }
+      /* For date picker icon color */
+      input[type="date"]::-webkit-calendar-picker-indicator {
+          filter: invert(34%) sepia(50%) saturate(1917%) hue-rotate(248deg) brightness(91%) contrast(90%); /* a purple filter */
+      }
+
+      .bubble-button {
+        padding: 0.5rem 1rem;
+        background-color: white;
+        border: 1px solid #cbd5e1; /* slate-300 */
+        color: #475569; /* slate-600 */
+        border-radius: 9999px; /* rounded-full */
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .bubble-button:hover {
+        background-color: #f1f5f9; /* slate-100 */
+        border-color: #6366f1; /* indigo-500 */
+        color: #4338ca; /* indigo-700 */
+      }
+
+      /* Study Plan rendering */
+      .study-plan-subtitle {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 700; /* bold */
+          margin-top: 0.75rem;
+          margin-bottom: 0.25rem;
+          color: #1e3a8a; /* blue-900 */
+          font-size: 1rem;
+      }
+      .study-plan-text {
+          font-family: 'Poppins', sans-serif;
+          font-size: 0.8rem;
+          line-height: 1.6;
+          text-align: left;
+          color: #334155; /* slate-700 */
+      }
+      .study-plan-text u.font-marker {
+        font-size: 1.8rem;
+      }
+      /* New styles for interactive checkboxes in study plan */
+      .study-plan-task {
+          font-family: 'Poppins', sans-serif;
+          font-size: 0.8rem;
+          line-height: 1.6;
+          color: #334155; /* slate-700 */
+      }
+      .study-plan-task input[type="checkbox"] {
+          /* Custom checkbox styles */
+          appearance: none;
+          -webkit-appearance: none;
+          background-color: #fff;
+          margin: 0;
+          font: inherit;
+          color: currentColor;
+          width: 1.15em;
+          height: 1.15em;
+          border: 0.1em solid #6A0DAD;
+          border-radius: 0.25em;
+          transform: translateY(-0.075em);
+          display: grid;
+          place-content: center;
+          flex-shrink: 0;
+          margin-top: 0.2em;
+      }
+      .study-plan-task input[type="checkbox"]::before {
+          content: "";
+          width: 0.65em;
+          height: 0.65em;
+          transform: scale(0);
+          transition: 120ms transform ease-in-out;
+          box-shadow: inset 1em 1em #6A0DAD;
+          /* Clip path for checkmark */
+          clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+      }
+      .study-plan-task input[type="checkbox"]:checked::before {
+          transform: scale(1);
+      }
+      .scaffold-placeholder {
+        color: #2563eb; /* blue-600 */
+        font-weight: 500;
+      }
+      .case-study-question {
+        font-family: 'Poppins', sans-serif;
+        color: #6A0DAD; /* purple */
+      }
+      /* New styles for color-coding Assessment Objectives */
+      .ao1 {
+        color: #D97706; /* amber-600 */
+        font-weight: 600;
+      }
+      .ao2 {
+        color: #2563EB; /* blue-600 */
+        font-weight: 600;
+      }
+      .ao3 {
+        color: #16A34A; /* green-600 */
+        font-weight: 600;
+      }
+      .blinking-cursor {
+        display: inline-block;
+        width: 3px;
+        height: 1.25rem; /* Matches text size */
+        background-color: #1e3a8a; /* blue-900 */
+        margin-left: 4px;
+        animation: blink 1s step-end infinite;
+      }
+
+      @keyframes blink {
+        from, to { opacity: 1; }
+        50% { opacity: 0; }
+      }
+
+      /* Chat Input styles */
+      .chat-input-textarea {
+        font-family: 'Poppins', sans-serif;
+        max-height: 16rem; /* approx 10 lines */
+        transition: height 0.2s ease;
+        overflow-y: hidden; /* Hide scrollbar by default */
+        box-sizing: border-box; /* ensure padding is included in height */
+      }
+      .chat-input-textarea::placeholder {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.9rem; /* Smaller to fit on one line */
+        color: #6b7280; /* gray-500 */
+        opacity: 1; /* Firefox */
+      }
+
+      /* Settings Dropdown styles */
+      .settings-select {
+        width: 100%;
+        padding: 0.5rem 0.75rem; /* Smaller padding */
+        border: 1px solid #cbd5e1; /* slate-300 */
+        border-radius: 8px; /* Slightly less rounded */
+        background-color: white;
+        color: #334155; /* slate-700 */
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.875rem; /* 14px */
+        -webkit-appearance: none; /* Removes default OS styling */
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 2.5rem; /* Make space for the arrow */
+        transition: border-color 0.2s;
+      }
+      .settings-select:focus {
+        outline: none;
+        border-color: #6366f1; /* indigo-500 */
+        box-shadow: 0 0 0 1px #6366f1;
+      }
+
+      /* New ellipsis wave loader */
+      @keyframes ellipsis-wave-bounce {
+        0%, 60%, 100% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .ellipsis-loader {
+        display: flex;
+        align-items: center;
+        height: 2rem; /* Give it some height to contain the bounce */
+      }
+
+      .ellipsis-loader span {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background-color: currentColor;
+        border-radius: 50%;
+        margin: 0 4px;
+        animation: ellipsis-wave-bounce 1.3s infinite ease-in-out;
+      }
+
+      .ellipsis-loader span:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      .ellipsis-loader span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .ellipsis-loader span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      /* New button style for re-activating avatar */
+      .reactivate-avatar-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 30;
+        padding: 0.375rem; /* 6px */
+        background-color: rgba(241, 245, 249, 0.7); /* slate-100 70% */
+        border-radius: 9999px;
+        border: 1px solid transparent;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        transition: all 0.2s ease-in-out;
+        opacity: 0.7;
+      }
+      .reactivate-avatar-btn:hover {
+        opacity: 1;
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        background-color: rgba(255, 255, 255, 0.9);
+      }
+      
+      /* Flashcard styles */
+      .flashcard-container {
+        perspective: 1000px; /* For 3D effect */
+      }
+      .flashcard {
+        width: 100%;
+        max-width: 480px;
+        height: 20rem; /* 320px */
+        position: relative;
+        transition: transform 0.6s, box-shadow 0.3s, scale 0.3s;
+        transform-style: preserve-3d;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+        transform-origin: center;
+      }
+      .flashcard:hover {
+        transform: scale(1.02);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      }
+      .flashcard.flipped {
+        transform: rotateY(180deg) scale(1.02);
+      }
+      .flashcard-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        text-align: center;
+        background-color: #FAFAFA;
+        border: 1px solid #E0E0E0;
+        border-radius: 16px;
+        font-family: 'Poppins', sans-serif;
+        color: #1f2937; /* gray-800 */
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+      .flashcard-back {
+        transform: rotateY(180deg);
+        font-size: 1.1rem;
+        font-weight: 400;
+        line-height: 1.5;
+      }
+
+      /* Countdown timer */
+      .countdown-timer {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: grid;
+        place-content: center;
+        font-size: 0.8rem;
+        background-color: rgba(255, 255, 255, 0.8);
+        color: #475569; /* slate-600 */
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+      }
+      .countdown-timer::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: conic-gradient(#60a5fa var(--progress, 0%), transparent var(--progress, 0%));
+        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 0);
+        mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 0);
+      }
+      @keyframes countdown-animation {
+        from { --progress: 0%; }
+        to { --progress: 100%; }
+      }
+      .countdown-timer.active {
+        animation: countdown-animation 5s linear forwards;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.28.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
