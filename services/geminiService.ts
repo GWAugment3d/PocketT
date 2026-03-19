@@ -8,7 +8,8 @@ let aiClient: GoogleGenAI | null = null;
 
 const getAI = () => {
     if (!aiClient) {
-        const apiKey = process.env.GEMINI_API_KEY;
+        // Try to get key from process.env (build-time) or window.ENV (runtime)
+        const apiKey = process.env.GEMINI_API_KEY || (window as any).ENV?.GEMINI_API_KEY;
         if (!apiKey) {
             throw new Error('GEMINI_API_KEY is not set. Please check your environment variables.');
         }

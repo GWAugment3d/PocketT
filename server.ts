@@ -13,6 +13,13 @@ async function startServer() {
     res.json({ status: "ok", env: process.env.NODE_ENV, port: PORT });
   });
 
+  app.get("/config.js", (req, res) => {
+    res.type("application/javascript");
+    res.send(`window.ENV = ${JSON.stringify({
+      GEMINI_API_KEY: process.env.GEMINI_API_KEY
+    })};`);
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     try {
